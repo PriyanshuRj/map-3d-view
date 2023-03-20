@@ -1,16 +1,15 @@
-import Map from "/node_modules/ol/Map.js";
-import OSM from "/node_modules/ol/source/OSM.js";
-import TileLayer from "/node_modules/ol/layer/Tile.js";
-import View from "/node_modules/ol/View.js";
-import { fromLonLat } from "/node_modules/ol/proj.js";
-import Feature from "/node_modules/ol/Feature.js";
-import VectorLayer from "/node_modules/ol/layer/Vector.js";
-import { Point } from "/node_modules/ol/geom.js";
-import VectorSource from "/node_modules/ol/source/Vector.js";
-import { Overlay } from "/node_modules/ol";
-import { get } from "/node_modules/ol/proj";
-import GeoJSON from "/node_modules/ol/format/GeoJSON.js";
+import Map from "ol/Map.js";
+import OSM from "ol/source/OSM.js";
+import TileLayer from "ol/layer/Tile.js";
+import View from "ol/View.js";
+import { fromLonLat } from "ol/proj.js";
+import VectorLayer from "ol/layer/Vector.js";
+import VectorSource from "ol/source/Vector.js";
+import { get } from "ol/proj";
+import GeoJSON from "ol/format/GeoJSON.js";
 
+const startingLong = 10.93376479;
+const starttingLat = 50.98376802;
 const map = new Map({
   layers: [
     new TileLayer({
@@ -19,16 +18,18 @@ const map = new Map({
   ],
   target: "map",
   view: new View({
-    center: fromLonLat([10.93376479, 50.98376802]),
-    zoom: 18,
+    center: fromLonLat([startingLong, starttingLat]),
+    zoom: 20,
   }),
 });
 
+
 $(document).ready(function () {
+
   // FETCHING DATA FROM JSON FILE
-  $.getJSON("/public/js/pinConfig.json", function (data) {
+  $.getJSON("/js/pinConfig.json", function (data) {
     {
-      data.data.map((point, index) => {
+      data.data.map((point) => {
         let pt = {};
         let features = [
           {
@@ -59,21 +60,35 @@ $(document).ready(function () {
       });
     }
   });
+
+
+});
+var panorama, viewer, container;
+$(document).ready(function () {
+  container = document.querySelector('#container');
+  viewer = new PANOLENS.Viewer({
+    container: container,
+    output: 'console'
+  });
+  panorama = new PANOLENS.ImagePanorama('/assets/HMTpano_000001_000000.jpg' ); 
+    viewer.add(panorama);
+    viewer.setPanorama(panorama);
 });
 
-const displayFeatureInfo = function (pixel) {
+
+const displayNewLocationPanoroma = function (pixel) {
   const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
     return feature;
   });
 
   if (feature) {
-    console.log("here is the event", feature.get("fileName"));
-    
-  } else {
-  }
-
-
+    panorama = new PANOLENS.ImagePanorama('/assets/' + feature.get("fileName").substring(1)); 
+    viewer.add(panorama);
+    viewer.setPanorama(panorama);
+  } 
 };
+
 map.on('click', function (evt) {
-  displayFeatureInfo(evt.pixel);
+
+  displayNewLocationPanoroma(evt.pixel);
 })

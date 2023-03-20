@@ -1,5 +1,5 @@
 {
-  "name": "simple",
+  "name": "map3dRender",
   "dependencies": {
     "ol": "7.3.0"
   },
