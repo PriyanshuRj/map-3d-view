@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap');
 #container {
     width: 50%;
     height: 100vh;
@@ -10,4 +11,29 @@
 .main-div{
   display: flex;
   flex-direction: row;
+}
+.page-title{
+  text-align: center;
+  font-size: 4rem;
+  margin-bottom: 2.8rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+}
+
+@media screen and (max-width: 700px){
+  .main-div{
+    flex-direction: column;
+  }
+  .page-title{
+    font-size: 2rem;
+    margin-bottom: 2rem;
+
+  }
+  #container{
+    width: 100%;
+
+  }
+  #map{
+    width: 100%;
+  }
 }
