@@ -63,6 +63,24 @@ $(document).ready(function () {
 
 
 });
+function checkIfImageExists(url, callback) {
+  const img = new Image();
+  img.src = url;
+
+  if (img.complete) {
+    callback(true);
+  } else {
+    img.onload = () => {
+      callback(true);
+    };
+    
+    img.onerror = () => {
+      callback(false);
+    };
+  }
+}
+
+
 var panorama, viewer, container;
 $(document).ready(function () {
   container = document.querySelector('#container');
@@ -76,15 +94,29 @@ $(document).ready(function () {
 });
 
 
-const displayNewLocationPanoroma = function (pixel) {
+const displayNewLocationPanoroma = async function (pixel) {
   const feature = map.forEachFeatureAtPixel(pixel, function (feature) {
     return feature;
   });
 
   if (feature) {
-    panorama = new PANOLENS.ImagePanorama('/assets/' + feature.get("fileName").substring(1)); 
-    viewer.add(panorama);
-    viewer.setPanorama(panorama);
+    try{
+  await checkIfImageExists('/assets/' + feature.get("fileName").substring(1),(exists)=>{
+    if(!exists){
+      alert("Selected Coordinate doesn't have a 3D view available yet !");
+      return;
+    }
+    else{
+      panorama = new PANOLENS.ImagePanorama('/assets/' + feature.get("fileName").substring(1)); 
+      viewer.add(panorama);
+      viewer.setPanorama(panorama);
+    }
+  })
+
+      
+    } catch(e){
+      console.warn(e)
+    }
   } 
 };
 
